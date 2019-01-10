@@ -2,48 +2,54 @@ package ooo.alphaman.googlebooksearch;
 
 public class Books {
 
-    private static String mAuthor;
-    private static String mTitle;
-    private static String mLanguage;
-    private static String mPublisher;
-    private static String mUrl;
-    private static String mThumbnail;
 
-    private Books(String author, String title, String language, String publisher, String url, String thumbnail){
-        mAuthor = author;
+    private static String mBookId;
+    private static String mSelfLink;
+    private static String mTitle;
+    private static String[] mAuthor;
+    private static String mPublisher;
+
+
+    public Books(String bookId, String selfLink, String title, String[] author, String publisher, String smallThumbnail, String thumbnail) {
+        mBookId = bookId;
+        mSelfLink = selfLink;
         mTitle = title;
-        mLanguage = language;
+        mAuthor = author;
         mPublisher = publisher;
-        mUrl = url;
+        mSmallThumbnail = smallThumbnail;
         mThumbnail = thumbnail;
     }
 
-    public static String getmAuthor() {
-        return mAuthor;
+    public static String getmBookId() {
+        return mBookId;
+    }
+
+    public static String getmSelfLink() {
+        return mSelfLink;
     }
 
     public static String getmTitle() {
         return mTitle;
     }
 
-    public static String getmLanguage() {
-        return mLanguage;
+    public static String[] getmAuthor() {
+        return mAuthor;
     }
 
     public static String getmPublisher() {
         return mPublisher;
     }
 
-    public static String getmUrl() {
-        return mUrl;
+    public static String getmSmallThumbnail() {
+        return mSmallThumbnail;
     }
 
     public static String getmThumbnail() {
         return mThumbnail;
     }
 
-
-
+    private static String mSmallThumbnail;
+    private static String mThumbnail;
 
 
 }

@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
@@ -23,6 +24,7 @@ import java.util.List;
 public class QueryUtils {
 
     private static final String LOG_TAG = QueryUtils.class.getName();
+    private static final String GOOGLE_BOOKS_SELF_LINK = "https://www.googleapis.com/books/v1/volumes/";
 
     private QueryUtils() {
     }
@@ -45,15 +47,15 @@ public class QueryUtils {
     }
 
     //Reading from InputSteam and storing it in String variable
-    private static String readFromStream(InputStream inputStream) throws IOException{
+    private static String readFromStream(InputStream inputStream) throws IOException {
 
         StringBuilder output = new StringBuilder();
 
-        if(inputStream != null){
+        if (inputStream != null) {
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream, Charset.forName("UTF-8"));
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             String line = bufferedReader.readLine();
-            while(line != null){
+            while (line != null) {
                 output.append(line);
                 line = bufferedReader.readLine();
             }
@@ -103,18 +105,45 @@ public class QueryUtils {
 
     //JSON Parser for parsing the JSON and making Books objects from given information
 
-    private static List<Books> jsonParserMakeBooks(String booksJson){
-        if(TextUtils.isEmpty(booksJson)){
+    List<Books> jsonParserMakeBooks(String booksJson) {
+        if (TextUtils.isEmpty(booksJson)) {
             return null;
         }
 
         List<Books> books = new ArrayList<>();
 
-        try{
+        try {
 
             JSONObject baseJsonResponse = new JSONObject(booksJson);
-        }catch(JSONException e){
-            
+
+            JSONArray itemArray = baseJsonResponse.getJSONArray("items");
+
+            for (int i = 0; i < itemArray.length(); i++) {
+
+                JSONObject itemObj = itemArray.getJSONObject(i);
+
+                String bookId = itemObj.getString("id");
+                String selfLink = itemObj.getString("selfLink");
+                JSONObject volumeInfo = itemObj.getJSONObject("volumeInfo");
+                String title = volumeInfo.getString("title");
+                JSONArray authors = volumeInfo.getJSONArray("authors");
+                String[] author = new String[authors.length()];
+                for (i = 0; i < authors.length(); i++) {
+                    author[i] = authors.getString(i);
+                }
+                String publisher = volumeInfo.getString("publisher");
+                JSONObject imageLinks = volumeInfo.getJSONObject("imageLinks");
+                String smallThumbnail = imageLinks.getString("smallThumbnail");
+                String thumbnail = imageLinks.getString("thumbnail");
+
+                Books book = new Books(bookId, selfLink, title, author, publisher, smallThumbnail, thumbnail);
+                books.add(book);
+            }
+
+
+        } catch (JSONException e) {
+            Log.e("QueryUtils", "Problem parsing the earthquake JSON results", e);
+
         }
 
         return books;
