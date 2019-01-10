@@ -113,7 +113,11 @@ public class QueryUtils {
         try{
 
             JSONObject baseJsonResponse = new JSONObject(booksJson);
+        }catch(JSONException e){
+            
         }
+
+        return books;
     }
 
 }
